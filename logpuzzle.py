@@ -12,14 +12,18 @@ http://code.google.com/edu/languages/google-python-class/
 Given an apache logfile, find the puzzle urls and download the images.
 
 Here's what a puzzle url looks like:
-10.254.254.28 - - [06/Aug/2007:00:13:48 -0700] "GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
+10.254.254.28 - - [06/Aug/2007:00:13:48 -0700]
+"GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-"
+"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6)
+Gecko/20070725 Firefox/2.0.0.6"
 
 """
+___author___ = "Justin Miller"
 
-import os
+# import os
 import re
 import sys
-import urllib
+# import urllib
 import argparse
 
 
@@ -29,7 +33,12 @@ def read_urls(filename):
     Screens out duplicate urls and returns the urls sorted into
     increasing order."""
     # +++your code here+++
-    pass
+    with open(filename, 'r') as rf:
+        text = rf.read()
+    matches = re.findall(r'GET (\S*puzzle\S*) HTTP', text)
+    for match in matches:
+        print(match)
+    return matches
 
 
 def download_images(img_urls, dest_dir):
@@ -47,8 +56,10 @@ def download_images(img_urls, dest_dir):
 def create_parser():
     """Create an argument parser object"""
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--todir',  help='destination directory for downloaded images')
-    parser.add_argument('logfile', help='apache logfile to extract urls from')
+    parser.add_argument('-d', '--todir',
+                        help='destination directory for downloaded images')
+    parser.add_argument('logfile',
+                        help='apache logfile to extract urls from')
 
     return parser
 
@@ -65,10 +76,10 @@ def main(args):
 
     img_urls = read_urls(parsed_args.logfile)
 
-    if parsed_args.todir:
-        download_images(img_urls, parsed_args.todir)
-    else:
-        print('\n'.join(img_urls))
+    # if parsed_args.todir:
+    #     download_images(img_urls, parsed_args.todir)
+    # else:
+    #     print('\n'.join(img_urls))
 
 
 if __name__ == '__main__':
