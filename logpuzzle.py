@@ -36,8 +36,11 @@ def read_urls(filename):
     with open(filename, 'r') as rf:
         text = rf.read()
     matches = re.findall(r'GET (\S*puzzle\S*) HTTP', text)
+    matches = set(matches) #https://www.geeksforgeeks.org/python-ways-to-remove-duplicates-from-list/
+    matches = sorted(matches)
     for match in matches:
         print(match)
+    print(len(matches))
     return matches
 
 
