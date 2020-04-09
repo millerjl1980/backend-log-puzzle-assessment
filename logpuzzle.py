@@ -18,13 +18,19 @@ Here's what a puzzle url looks like:
 Gecko/20070725 Firefox/2.0.0.6"
 
 """
-___author___ = "Justin Miller"
+___author___ = "Justin Miller internet resources noted thru code"
 
 import os
 import re
 import sys
 import urllib.request
 import argparse
+
+
+def part_c_sort(match):
+    """Returns 2nd set of letters in filename p-1111-2222.jpg"""
+    match = match.split('-')[-1]
+    return match
 
 
 def read_urls(filename):
@@ -38,7 +44,11 @@ def read_urls(filename):
     matches = re.findall(r'GET (\S*puzzle\S*) HTTP', text)
     # https://www.geeksforgeeks.org/python-ways-to-remove-duplicates-from-list/
     matches = set(matches)
-    matches = sorted(matches)
+    if filename.startswith('place'):
+        # https://www.w3schools.com/python/ref_list_sort.asp
+        matches = sorted(matches, key=part_c_sort)
+    else:
+        matches = sorted(matches)
     full_paths = []
     for match in matches:
         full_paths.append('http://code.google.com' + match)
@@ -63,11 +73,10 @@ def download_images(img_urls, dest_dir):
     img_paths = []
     for url, count in enumerate(img_urls):
         img_paths.append(dest_dir + '/img_' + str(url) + '.jpg')
-    for paths in img_paths:
-        print(paths)
 
     # Download Images to Directory
     # https://youtu.be/2Rf01wfbQLk
+    print("Downloading {} images...".format(len(img_paths)))
     for img, path in zip(img_urls, img_paths):
         urllib.request.urlretrieve(img, path)
 
@@ -81,6 +90,8 @@ def download_images(img_urls, dest_dir):
         for path in img_paths:
             f.writelines('<img src="./' + path + '" />')
         f.write('</body></html>')
+    print('Processing complete!  Open file {} to see constructed image!'
+          .format(html_file))
 
 
 def create_parser():
