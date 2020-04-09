@@ -23,7 +23,7 @@ ___author___ = "Justin Miller"
 # import os
 import re
 import sys
-# import urllib
+import urllib.request
 import argparse
 
 
@@ -38,13 +38,14 @@ def read_urls(filename):
     matches = re.findall(r'GET (\S*puzzle\S*) HTTP', text)
     matches = set(matches) #https://www.geeksforgeeks.org/python-ways-to-remove-duplicates-from-list/
     matches = sorted(matches)
+    full_paths = []
     for match in matches:
-        print(match)
-    print(len(matches))
-    return matches
+        full_paths.append('http://code.google.com' + match)
+    return full_paths
 
 
-def download_images(img_urls, dest_dir):
+def download_images(img_urls):
+# , dest_dir):
     """Given the urls already in the correct order, downloads
     each image into the given directory.
     Gives the images local filenames img0, img1, and so on.
@@ -53,7 +54,22 @@ def download_images(img_urls, dest_dir):
     Creates the directory if necessary.
     """
     # +++your code here+++
-    pass
+    #https://www.geeksforgeeks.org/python-check-if-a-file-or-directory-exists-2/
+    # if not os.path.isdir(dest_dir):
+    #     os.mkdir(dest_dir)
+    # Image Names
+    dest_dir = 'images'
+    img_paths = []
+    for url , count in enumerate(img_urls):
+        img_paths.append(dest_dir + '/img_' + str(url) + '.jpg')
+    for paths in img_paths:
+        print(paths)
+
+    # Download Images to Directory
+    for img, path in zip(img_urls, img_paths):
+        urllib.request.urlretrieve(img, path)
+
+    return img_paths
 
 
 def create_parser():
@@ -78,6 +94,7 @@ def main(args):
     parsed_args = parser.parse_args(args)
 
     img_urls = read_urls(parsed_args.logfile)
+    imges = download_images(img_urls)
 
     # if parsed_args.todir:
     #     download_images(img_urls, parsed_args.todir)
